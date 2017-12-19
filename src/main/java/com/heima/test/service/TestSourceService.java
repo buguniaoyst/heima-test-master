@@ -31,4 +31,20 @@ public class TestSourceService  extends  BaseService<TestSource>{
 
         return  null;
     }
+
+    public TestSource getTestSourceById(Integer id) {
+        return this.getMapper().selectByPrimaryKey(id);
+    }
+
+    public TestSource queryTestSoueceByTestId(Integer testId) {
+        Example example = new Example(TestSource.class);
+        example.createCriteria().andEqualTo("id", testId);
+        List<TestSource> testSources = this.getMapper().selectByExample(example);
+        if (null != testSources && testSources.size() > 0) {
+            return testSources.get(0);
+        }else {
+            return  null;
+        }
+
+    }
 }

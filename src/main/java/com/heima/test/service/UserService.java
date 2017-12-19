@@ -50,4 +50,15 @@ public class UserService extends BaseService<User> {
         this.getMapper().updateByExampleSelective(user,example);
 
     }
+
+    public User queryUserByClassIdAndStuId(Integer classId, Integer stuId) {
+        Example example = new Example(User.class);
+        example.createCriteria().andEqualTo("classid", classId)
+                .andEqualTo("id", stuId);
+        List<User> userList = this.getMapper().selectByExample(example);
+        if (null != userList && userList.size() > 0) {
+            return userList.get(0);
+        }
+        return  null;
+    }
 }

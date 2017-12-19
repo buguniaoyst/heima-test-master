@@ -187,7 +187,7 @@
                 var td2 = $("<td align='center'>"+itemType+"</td>");
                 var td3 = $("<td align='center'>"+data[i].itemSourceId+"</td>");
                 var  td4 = $("<td align='center' >"+data[i].itemContent+"</td>");
-                var  td5 = $("<td align='center' ><button  class='layui-btn  layui-btn-radius' >"+itemStatus+"</button></td>");
+                var  td5 = $("<td align='center' ><input type='button'  class='layui-btn  layui-btn-radius' value="+itemStatus+" /></td>");
                 td0.appendTo(tr);
                 td1.appendTo(tr);
                 td2.appendTo(tr);

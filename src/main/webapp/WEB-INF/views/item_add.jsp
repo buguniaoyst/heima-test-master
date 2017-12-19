@@ -98,6 +98,12 @@
                 <input type="radio" name="itemStatus" value="0" title="禁用" >
             </div>
         </div>
+           <div class="layui-form-item layui-input-inline" pane="">
+            <label class="layui-form-label">分值</label>
+            <div class="layui-input-block">
+                <input type="number" name="itemScore" class="layui-input">
+            </div>
+        </div>
         <div class="layui-form-item layui-form-text">
             <label class="layui-form-label">题干信息</label>
             <div class="layui-input-block">

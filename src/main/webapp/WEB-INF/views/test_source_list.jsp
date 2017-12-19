@@ -142,7 +142,7 @@
                 var td2 = $("<td align='center'>"+data[i].testName+"</td>");
                 var td3 = $("<td align='center'>"+testType+"</td>");
                 var td4 = $("<td align='center'>"+testStatus+"</td>");
-                var td5 = $("<td align='center'><a href="+"/rest/item_detail_list?itemids='"+data[i].testItems+"'&testName='"+data[i].testName+"'><button  class='layui-btn  layui-btn-radius' >查看详情</button></a></td>");
+                var td5 = $("<td align='center'><a href="+"/rest/item_detail_list?itemids="+data[i].testItems+"&testName="+data[i].testName+"><button  class='layui-btn  layui-btn-radius' >查看详情</button></a></td>");
                 td1.appendTo(tr);
                 td2.appendTo(tr);
                 td3.appendTo(tr);

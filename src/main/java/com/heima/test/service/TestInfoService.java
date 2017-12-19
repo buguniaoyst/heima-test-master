@@ -2,6 +2,7 @@ package com.heima.test.service;
 
 import com.github.abel533.entity.Example;
 import com.heima.test.domain.TestInfo;
+import com.heima.test.domain.TestSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,4 +17,6 @@ public class TestInfoService extends  BaseService<TestInfo>{
         example.createCriteria().andEqualTo("testid", testInfo.getTestid());
         return this.getMapper().selectByExample(example);
     }
+
+
 }

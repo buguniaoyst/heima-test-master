@@ -101,8 +101,6 @@ public class TestSourceController {
 
         }
         List<ItemInfo> itemInfoList = itemInfoService.queryByIds(ItemInfo.class, itemsIds);
-
-
         //封装数据
         Map<String, Object> result = new HashMap<>();
         result.put("testSource", testSource);
@@ -111,5 +109,10 @@ public class TestSourceController {
     }
 
 
+    @RequestMapping(value = "getTestSourceById",method = RequestMethod.GET)
+    @ResponseBody
+    public TestSource getTestSourceById(TestSource testSource) {
+        return testSourceService.getTestSourceById(testSource.getId());
+    }
 
 }

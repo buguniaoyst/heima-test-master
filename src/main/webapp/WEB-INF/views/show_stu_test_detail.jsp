@@ -14,14 +14,15 @@
 <div style=" margin: 40px auto 6px 0px;" >
     <form class="layui-form layui-form-pane" action="" method="post">
         <div class="site-tips">
-            <span style="font-size: 20px" id="stuTestName"></span>
+            试卷名：<span style="font-size: 20px" id="stuTestName"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+            姓名：<span style="font-size: 20px" id="stuName"></span>
         </div>
         <div id="itemArea" style="margin-left: 10px">
 
         </div>
         <div class="layui-form-item">
-            <input type="button" id="submitTest" class="layui-btn " value="立即交卷">
-            <button class="layui-btn "   type="reset" >重做</button>
+            <input type="button" id="submitTest" class="layui-btn " value="提交，批改下一份">
+            <button class="layui-btn "   type="reset" >重置</button>
         </div>
     </form>
 </div>
@@ -57,29 +58,40 @@
 
         //页面初始化的时候加载分页数据
         $(function(){
-            //alert("页面初始化了.......");
-
             $.ajax({
                 type: "GET",
-                url: "${pageContext.request.contextPath}/rest/test_source/showStuTest?testId=${loginUser.testid}",
+                url: "${pageContext.request.contextPath}/rest/test/piyueTest?classId=${param.classId}&testId=${param.testId}&stuId=${param.stuId}",
                 //记得加双引号  T_T
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (data) {
                     console.log(data);
-                    $("#stuTestName").html(data.testSource.testName);
-                    var items = data.itemInfoList;
-                    if(items && items.length>0) {
+                    $("#stuTestName").html(data.testSourceInfo.testName);
+                    $("#stuName").html(data.student.username);
+                    $("#stuName").attr("stuId",data.student.id);
+                    var answerInfos = data.answerInfoList;
+                    if(answerInfos && answerInfos.length>0) {
                         var count = 1;
-                        for(var i = 0;i<items.length;i++){
-                            //创建编程题
-                            if(items[i].itemType == '1') {
-                                createCodeItem(items[i],count);
-                                count++;
-                            }
+                        for(var i = 0;i<answerInfos.length;i++){
+                            //根据itemId查询 item信息
+                           var itemId =  answerInfos[i].itemId;
+                            $.ajax({
+                                type: "GET",
+                                url: "${pageContext.request.contextPath}/rest/item/getItemInfoByItemId?itemId="+itemId,
+                                //记得加双引号  T_T
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+                                async:false,
+                                success: function (data) {
+                                    //创建编程题
+                                    if(data.itemType == '1') {
+                                        createCodeItem(data,count,answerInfos[i]);
+                                        count++;
+                                    }
+                                }
+                            });
                         }
                     }
-
 
                 },
                 error: function (err) {
@@ -90,13 +102,11 @@
         })
 
         //创建编程题
-        function createCodeItem(items,count) {
-
+        function createCodeItem(items,count,answer) {
             console.log(items);
-
             var _div = $("<div class='itemAnswerArea'   id="+items.id+" >\n" +
                 "            <div class=\"site-title\">\n" +
-                "                <fieldset><legend><a >第"+count+"题</a></legend></fieldset>\n" +
+                "                <fieldset><legend><a >第"+count+"题("+items.itemScore+"分)</a></legend></fieldset>\n" +
                 "            </div>\n" +
                 "            <div class=\"site-item\">\n" +
                 "               "+ items.itemContent+"\n" +
@@ -106,7 +116,7 @@
                 "                <div class=\"layui-form-item layui-form-text\">\n" +
                 "                    <label class=\"layui-form-label\">请在写下你的做题思路（步骤）：</label>\n" +
                 "                    <div class=\"layui-input-block\">\n" +
-                "                        <textarea placeholder=\"请输入思路\" class=\"layui-textarea silu\"></textarea>\n" +
+                "                        <textarea placeholder=\"请输入思路\"  class=\"layui-textarea silu\">"+answer.silu+"</textarea>\n" +
                 "                    </div>\n" +
                 "                </div>\n" +
                 "            </div>\n" +
@@ -115,12 +125,19 @@
                 "                <div class=\"layui-form-item layui-form-text\">\n" +
                 "                    <label class=\"layui-form-label\">请将你的答案粘贴到下边的文本域中：</label>\n" +
                 "                    <div class=\"layui-input-block\">\n" +
-                "                        <textarea placeholder=\"请输入答案\" class=\"layui-textarea answer\"></textarea>\n" +
+                "                        <textarea placeholder=\"请输入答案\" class=\"layui-textarea answer\">"+answer.answer+"</textarea>\n" +
                 "                    </div>\n" +
                 "                </div>\n" +
                 "            </div>\n" +
                 "        </div>")
+            var scoreSpan = $(" <div class=\"layui-form-item\">\n" +
+                "    <label class=\"layui-form-label\">综合评分：</label>\n" +
+                "    <div class=\"layui-input-inline\">\n" +
+                "      <input type=\"number\" name=\"itemScore\" lay-verify=\"required\" placeholder=\"请输入分值\" autocomplete=\"off\" class=\"layui-input\">\n" +
+                "    </div>\n" +
+                "  </div>")
             _div.appendTo($("#itemArea"));
+            scoreSpan.appendTo(_div);
         }
 
 
@@ -129,35 +146,27 @@
                 //获取提交的答案信息
                 alert(123);
                 var _divs=$(".itemAnswerArea");
-                var itemAnswers = new Array();
+                var scoreInfos = new Array();
                 //封装答案信息
-                var stuId = ${loginUser.id};
-                var classId = ${loginUser.classid};
+                var stuId =  $("#stuName").attr("stuId");
                 if(_divs){
                     _divs.each(function () {
-                        var id = $(this).attr('id');
-                        var silu = $(this).find('textarea')[0].value;
-                        var answer = $(this).find('textarea')[1].value;
-                        var itemAnswer = {};
-                        itemAnswer.stuId=stuId;
-                        itemAnswer.classId=classId;
-                        itemAnswer.itemId=id;
-                        itemAnswer.silu = silu;
-                        itemAnswer.answer = answer;
-                        itemAnswers.push(itemAnswer);
-                        console.log(itemAnswer);
+                        var itemId = $(this).attr('id');
+                        var itemScore = $(_divs.get(0)).find('input')[0].value;
+                        var scoreInfo = {};
+                        scoreInfo.stuId=stuId;
+                        scoreInfo.itemId=itemId;
+                        scoreInfo.itemScore=itemScore;
+                        scoreInfos.push(scoreInfo);
+                        console.log(scoreInfos);
                     })
                 }
-
-
-                console.log(itemAnswers);
+                console.log(scoreInfos);
               //  itemAnswersInfo = JSON.serialize(itemAnswersInfo);
-                itemAnswers = JSON.stringify(itemAnswers);
-                $.post("${pageContext.request.contextPath}/rest/answer/addAnswerInfo",{answerInfo:itemAnswers},function (result) {
+                scoreInfos = JSON.stringify(scoreInfos);
+                $.post("${pageContext.request.contextPath}/rest/score/submitScoreInfo",{scoreInfos:scoreInfos},function (result) {
                     if(result.result){
-                        //回显，把按钮禁用掉
-                        $("#submitTest").css("layui-btn-disabled");
-                        form.render();
+                        alert("批改成功");
                     }
 
                 });

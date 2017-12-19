@@ -86,6 +86,10 @@ var navs = [{
         "title": "安排测试",
         "icon": "&#xe60a;",
         "href": "/rest/item_test_create"
+    }, {
+        "title": "测试结果",
+        "icon": "&#xe60a;",
+        "href": "/rest/item_test_answer_list"
     }]
 }, {
 	"title": "其他",

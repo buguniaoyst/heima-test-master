@@ -110,5 +110,12 @@ public class ItemInfoController {
         return results;
     }
 
+    @RequestMapping(value = "getItemInfoByItemId",method = RequestMethod.GET)
+    @ResponseBody
+    public ItemInfo getItemInfoByItemId(@RequestParam("itemId") Integer id){
+       return itemInfoService.selectItemInfoByPrimaryId(id);
+    }
+
+
 
 }

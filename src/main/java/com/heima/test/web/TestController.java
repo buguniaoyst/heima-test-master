@@ -1,10 +1,7 @@
 package com.heima.test.web;
 
-import com.heima.test.domain.TestCtrl;
-import com.heima.test.domain.TestInfo;
-import com.heima.test.domain.User;
-import com.heima.test.service.TestInfoService;
-import com.heima.test.service.TestService;
+import com.heima.test.domain.*;
+import com.heima.test.service.*;
 import com.heima.test.utils.CommonUtils;
 import com.heima.test.utils.ScoreUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import sun.misc.Request;
@@ -33,6 +31,19 @@ public class TestController {
 
     @Autowired
     private TestInfoService testInfoService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AnswerInfoService answerInfoService;
+
+    @Autowired
+    private ItemInfoService itemInfoService;
+
+    @Autowired
+    private TestSourceService testSourceService;
+
 
     @RequestMapping("addTest")
     public ModelAndView addTest(TestCtrl testInfo, HttpServletRequest request) {
@@ -160,5 +171,38 @@ public class TestController {
         mv.addObject("scoreList",testInfoService.queryListByExample(testInfo));
         return mv;
     }
+
+
+    @RequestMapping(value = "piyueTest",method = RequestMethod.GET)
+    @ResponseBody
+    public Map<Object,Object> piyueTest(@RequestParam("classId") Integer classId, @RequestParam("testId")Integer testId, @RequestParam("stuId")Integer stuId){
+        System.out.println(classId+","+testId+","+stuId);
+        //根据stuId和classId 查询学员信息
+        User student = userService.queryUserByClassIdAndStuId(classId, stuId);
+
+        //根据testId 查询testSource信息
+        TestSource testSource = testSourceService.queryTestSoueceByTestId(testId);
+
+        //根据classId,testId,stuId查询答案信息
+        List<AnswerInfo> answerInfoList = answerInfoService.queryAnswerInfoListByClassIdAndTestIdAndStuId(classId, testId, stuId);
+
+        Map<Object, Object> result = new HashMap<>();
+        if (null != answerInfoList && answerInfoList.size() > 0) {
+//            for (AnswerInfo answerInfo : answerInfoList) {
+//                Integer itemId = answerInfo.getItemId();
+//                //根据答案信息中的itemId查询题目信息
+//              ItemInfo itemInfo =  itemInfoService.selectItemInfoByPrimaryId(itemId);
+//                //组装信息
+//              result.put(itemId, answerInfo);
+//            }
+            result.put("answerInfoList", answerInfoList);
+        }
+        result.put("testSourceInfo", testSource);
+        result.put("student", student);
+
+
+        return result;
+    }
+
 
 }

@@ -1,17 +1,19 @@
 package com.heima.test.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "item_info")
 public class ItemInfo {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String classType;
     private String itemType;
     private String itemSourceId;
     private String itemStatus;
     private String itemContent;
+    private  Double itemScore;
 
     public Integer getId() {
         return id;
@@ -61,6 +63,14 @@ public class ItemInfo {
         this.itemContent = itemContent;
     }
 
+    public Double getItemScore() {
+        return itemScore;
+    }
+
+    public void setItemScore(Double itemScore) {
+        this.itemScore = itemScore;
+    }
+
     @Override
     public String toString() {
         return "ItemInfo{" +
@@ -70,6 +80,7 @@ public class ItemInfo {
                 ", itemSourceId='" + itemSourceId + '\'' +
                 ", itemStatus='" + itemStatus + '\'' +
                 ", itemContent='" + itemContent + '\'' +
+                ", itemScore=" + itemScore +
                 '}';
     }
 }

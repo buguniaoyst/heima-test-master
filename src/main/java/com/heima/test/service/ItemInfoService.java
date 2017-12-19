@@ -7,4 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class ItemInfoService  extends  BaseService<ItemInfo>{
+    public ItemInfo selectItemInfoByPrimaryId(Integer itemId) {
+        return this.getMapper().selectByPrimaryKey(itemId);
+    }
 }

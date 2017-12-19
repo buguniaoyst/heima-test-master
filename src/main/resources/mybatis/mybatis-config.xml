@@ -3,8 +3,15 @@
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-
-	<plugins>
+	<settings>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+    <!-- 别名定义 -->
+    <typeAliases>
+        <!-- 批量别名定义,指定包名，mybatis自动扫描包中的po类，自动定义别名，别名是类名(首字母大写或小写都可以,一般用小写) -->
+        <package name="com.heima.test.domain" />
+    </typeAliases>
+    <plugins>
 		<!-- 配置分页助手 -->
 		<plugin interceptor="com.github.pagehelper.PageHelper">
 			<property name="dialect" value="mysql" />
